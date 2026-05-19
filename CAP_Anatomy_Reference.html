@@ -296,6 +296,7 @@
       color: var(--muted);
       font-weight: 600;
       grid-column: 1;
+      grid-row: 1 / span 2;
       padding-top: 2px;
     }
 
@@ -322,6 +323,8 @@
       color: var(--deep);
       display: block;
       margin-bottom: 3px;
+      grid-column: 2;
+      min-width: 0;
     }
 
     .turn.caller .actor { color: var(--deep-2); }
@@ -330,6 +333,10 @@
     .turn .text {
       color: var(--ink);
       font-size: 0.94rem;
+      grid-column: 2;
+      min-width: 0;
+      overflow-wrap: normal;
+      word-break: normal;
     }
 
     .turn .text code {
