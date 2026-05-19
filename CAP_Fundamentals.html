@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CAP Fundamentals</title>
+  <style>
+    :root {
+      --bg: #f3eee5;
+      --paper: rgba(252, 249, 243, 0.92);
+      --paper-strong: #fcf9f3;
+      --ink: #14231f;
+      --muted: #5f6e68;
+      --line: rgba(20, 35, 31, 0.12);
+      --line-strong: rgba(20, 35, 31, 0.22);
+      --deep: #123c3a;
+      --deep-2: #1d5955;
+      --accent: #cb6f3d;
+      --accent-soft: #eed8ca;
+      --sage: #d9e7df;
+      --gold: #c7a34b;
+      --warn: #b85a3a;
+      --shadow: 0 24px 70px rgba(20, 35, 31, 0.08);
+      --shadow-sm: 0 8px 22px rgba(20, 35, 31, 0.06);
+      --radius: 24px;
+      --max: 1200px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: "Aptos", "Segoe UI", "Helvetica Neue", sans-serif;
+      line-height: 1.55;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(203, 111, 61, 0.12), transparent 24%),
+        radial-gradient(circle at 100% 8%, rgba(29, 89, 85, 0.11), transparent 20%),
+        linear-gradient(180deg, #f8f3ea 0%, var(--bg) 100%);
+      min-height: 100vh;
+    }
+
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(90deg, rgba(20, 35, 31, 0.025) 1px, transparent 1px),
+        linear-gradient(rgba(20, 35, 31, 0.025) 1px, transparent 1px);
+      background-size: 72px 72px;
+      mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.45), transparent 92%);
+      z-index: 0;
+    }
+
+    .container {
+      width: min(calc(100% - 40px), var(--max));
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      padding: 22px 0 16px;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      background: linear-gradient(180deg, rgba(248, 243, 234, 0.92), rgba(248, 243, 234, 0.6));
+      border-bottom: 1px solid rgba(20, 35, 31, 0.06);
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand { display: flex; gap: 14px; align-items: center; }
+
+    .mark {
+      width: 44px; height: 44px;
+      display: grid; place-items: center;
+      border-radius: 15px;
+      background: linear-gradient(135deg, var(--deep), var(--deep-2));
+      color: #fff;
+      font-weight: 700; font-size: 0.78rem; letter-spacing: 0.05em;
+      box-shadow: var(--shadow);
+    }
+
+    .brand-copy strong {
+      display: block;
+      font-size: 0.96rem; letter-spacing: 0.03em;
+      color: var(--deep);
+    }
+
+    .brand-copy span {
+      display: block;
+      color: var(--muted);
+      font-size: 0.84rem;
+    }
+
+    nav {
+      display: flex; gap: 22px;
+      flex-wrap: wrap; justify-content: flex-end;
+    }
+
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.92rem;
+      transition: color 0.2s;
+    }
+
+    nav a:hover { color: var(--deep); }
+
+    /* Typography */
+    h1, h2, h3, h4 {
+      margin: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      line-height: 1.06;
+      font-weight: 700;
+      color: var(--deep);
+    }
+
+    h1 {
+      font-size: clamp(2.8rem, 5.5vw, 5rem);
+      max-width: 14ch;
+      letter-spacing: -0.01em;
+    }
+
+    h2 {
+      font-size: clamp(1.8rem, 2.8vw, 2.6rem);
+      letter-spacing: -0.005em;
+    }
+
+    h3 { font-size: 1.3rem; }
+    h4 { font-size: 1.08rem; }
+
+    p { margin: 0 0 0.9em; }
+
+    .eyebrow {
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.75rem;
+      color: var(--accent);
+      font-weight: 700;
+      display: inline-block;
+    }
+
+    main { padding: 28px 0 80px; }
+
+    /* Hero */
+    .hero {
+      display: grid;
+      grid-template-columns: 1.25fr 0.95fr;
+      gap: 28px;
+      padding: 28px 0 40px;
+    }
+
+    @media (max-width: 920px) { .hero { grid-template-columns: 1fr; } }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero-copy {
+      padding: 44px 44px 38px;
+      background:
+        linear-gradient(180deg, rgba(18, 60, 58, 0.03), rgba(18, 60, 58, 0)),
+        var(--paper);
+    }
+
+    .hero-copy h1 { margin-top: 14px; }
+
+    .hero-copy .lead {
+      max-width: 60ch;
+      margin: 22px 0 0;
+      color: var(--muted);
+      font-size: 1.08rem;
+    }
+
+    .thesis {
+      margin-top: 28px;
+      padding: 20px 22px;
+      border-radius: 20px;
+      background: linear-gradient(180deg, #f6f1e8, #efe8df);
+      border: 1px solid rgba(20, 35, 31, 0.08);
+      max-width: 38rem;
+    }
+
+    .thesis strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--deep);
+      font-size: 0.92rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .thesis p { margin: 0; color: var(--ink); }
+
+    .hero-summary {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background:
+        linear-gradient(160deg, rgba(18, 60, 58, 0.98), rgba(29, 89, 85, 0.94)),
+        var(--deep);
+      color: #f7f4ee;
+    }
+
+    .summary-top { padding: 32px 32px 16px; }
+
+    .summary-top h3 { color: #fff; margin-bottom: 8px; }
+
+    .summary-top p {
+      margin: 12px 0 0;
+      max-width: 32ch;
+      color: rgba(247, 244, 238, 0.84);
+      font-size: 0.96rem;
+    }
+
+    .summary-meta {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1px;
+      background: rgba(247, 244, 238, 0.16);
+      margin: 24px 0 0;
+    }
+
+    .summary-meta div {
+      padding: 22px 26px;
+      background: linear-gradient(180deg, rgba(247, 244, 238, 0.04), rgba(247, 244, 238, 0));
+    }
+
+    .summary-meta dt {
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: rgba(247, 244, 238, 0.6);
+      margin-bottom: 6px;
+    }
+
+    .summary-meta dd {
+      margin: 0;
+      font-family: Georgia, serif;
+      font-size: 1.4rem;
+      color: #fff;
+    }
+
+    .summary-bottom {
+      padding: 22px 32px 28px;
+      border-top: 1px solid rgba(247, 244, 238, 0.14);
+      font-size: 0.86rem;
+      color: rgba(247, 244, 238, 0.74);
+    }
+
+    /* Sections */
+    .section { padding: 56px 0 8px; }
+
+    .section-head {
+      max-width: 60ch;
+      margin: 0 0 28px;
+    }
+
+    .section-head h2 { margin-top: 8px; }
+
+    .section-head p {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 1.04rem;
+    }
+
+    /* What is a CAP - two columns */
+    .definition-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 760px) { .definition-grid { grid-template-columns: 1fr; } }
+
+    .definition-card {
+      padding: 36px 32px;
+      border-radius: 26px;
+      border: 1px solid var(--line);
+      background: var(--paper);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .definition-card.technical {
+      background: linear-gradient(160deg, rgba(18, 60, 58, 0.96), rgba(29, 89, 85, 0.92));
+      color: #f7f4ee;
+      border-color: transparent;
+    }
+
+    .definition-card.technical h3 { color: #fff; }
+    .definition-card.technical .eyebrow { color: var(--gold); }
+    .definition-card.technical p { color: rgba(247, 244, 238, 0.86); }
+    .definition-card.technical code {
+      background: rgba(247, 244, 238, 0.1);
+      color: var(--gold);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: "JetBrains Mono", "Menlo", "Consolas", monospace;
+      font-size: 0.92em;
+    }
+
+    .definition-card h3 { margin: 14px 0 14px; }
+    .definition-card p:last-child { margin-bottom: 0; }
+
+    code {
+      background: rgba(18, 60, 58, 0.07);
+      color: var(--deep);
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: "JetBrains Mono", "Menlo", "Consolas", monospace;
+      font-size: 0.92em;
+    }
+
+    /* Why CAPs exist - 3 reasons */
+    .reasons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 860px) { .reasons { grid-template-columns: 1fr; } }
+
+    .reason {
+      padding: 30px 28px;
+      border-radius: 22px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-sm);
+      position: relative;
+    }
+
+    .reason .num {
+      font-family: Georgia, serif;
+      font-size: 0.84rem;
+      letter-spacing: 0.16em;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .reason h4 { margin-bottom: 10px; }
+
+    .reason p {
+      color: var(--muted);
+      font-size: 0.96rem;
+      margin: 0;
+    }
+
+    /* Architectural truth - the centerpiece */
+    .arch-section {
+      padding: 70px 0 12px;
+    }
+
+    .arch-callout {
+      padding: 18px 26px;
+      border-radius: 100px;
+      background: rgba(199, 163, 75, 0.12);
+      border: 1px solid rgba(199, 163, 75, 0.28);
+      color: var(--deep);
+      font-family: Georgia, serif;
+      font-style: italic;
+      font-size: 1.08rem;
+      max-width: max-content;
+      margin: 18px 0 30px;
+    }
+
+    .arch-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 760px) { .arch-grid { grid-template-columns: 1fr; } }
+
+    .arch-card {
+      padding: 36px 32px 32px;
+      border-radius: 26px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .arch-card.yes {
+      background: linear-gradient(160deg, rgba(18, 60, 58, 0.98), rgba(29, 89, 85, 0.94));
+      color: #f7f4ee;
+      border: 1px solid transparent;
+    }
+
+    .arch-card.yes h3 { color: #fff; }
+    .arch-card.yes .eyebrow { color: var(--gold); }
+    .arch-card.yes .arch-status {
+      color: var(--gold);
+      font-family: Georgia, serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+    }
+
+    .arch-card.no {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      color: var(--ink);
+    }
+
+    .arch-card.no .eyebrow { color: var(--warn); }
+    .arch-card.no .arch-status {
+      color: var(--warn);
+      font-family: Georgia, serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+    }
+
+    .arch-card h3 { margin: 8px 0 16px; }
+
+    .agent-list {
+      list-style: none;
+      padding: 0;
+      margin: 18px 0 0;
+    }
+
+    .agent-list li {
+      padding: 14px 0;
+      border-top: 1px solid rgba(247, 244, 238, 0.16);
+      font-family: Georgia, serif;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .arch-card.no .agent-list li {
+      border-top-color: var(--line);
+      color: var(--ink);
+    }
+
+    .agent-list li:first-child { border-top: none; }
+
+    .agent-list li .check {
+      width: 24px; height: 24px;
+      display: grid; place-items: center;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .arch-card.yes .check {
+      background: var(--gold);
+      color: var(--deep);
+      font-weight: 700;
+    }
+
+    .arch-card.no .check {
+      background: rgba(184, 90, 58, 0.12);
+      color: var(--warn);
+      font-weight: 700;
+    }
+
+    .arch-conclusion {
+      margin-top: 28px;
+      padding: 28px 32px;
+      border-radius: 22px;
+      background:
+        linear-gradient(180deg, rgba(199, 163, 75, 0.09), rgba(199, 163, 75, 0.02)),
+        var(--paper);
+      border: 1px solid rgba(199, 163, 75, 0.22);
+    }
+
+    .arch-conclusion .eyebrow { color: var(--gold); }
+    .arch-conclusion h4 { margin: 8px 0 12px; color: var(--deep); }
+    .arch-conclusion p { margin: 0 0 0.8em; }
+    .arch-conclusion p:last-child { margin: 0; }
+
+    .arch-can-do {
+      margin-top: 20px;
+      padding: 24px 28px;
+      border-radius: 20px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+    }
+
+    .arch-can-do .eyebrow { color: var(--deep); }
+    .arch-can-do h4 { margin: 8px 0 14px; }
+
+    .arch-can-do ul {
+      margin: 0;
+      padding-left: 1.2em;
+    }
+
+    .arch-can-do li {
+      margin-bottom: 8px;
+      color: var(--ink);
+    }
+
+    .arch-can-do li:last-child { margin-bottom: 0; }
+
+    .faq-example {
+      margin-top: 20px;
+      padding: 22px 26px;
+      border-radius: 18px;
+      background: rgba(18, 60, 58, 0.04);
+      border-left: 3px solid var(--deep);
+    }
+
+    .faq-example .eyebrow { color: var(--deep); }
+    .faq-example h4 { margin: 8px 0 10px; font-size: 1rem; }
+    .faq-example p { margin: 0; font-size: 0.96rem; color: var(--ink); }
+
+    /* Six categories grid */
+    .categories {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 760px) { .categories { grid-template-columns: 1fr; } }
+
+    .category {
+      padding: 30px 30px 28px;
+      border-radius: 24px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .category:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .category .num {
+      font-family: Georgia, serif;
+      font-size: 0.78rem;
+      letter-spacing: 0.14em;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .category h3 { margin-bottom: 12px; }
+
+    .category .summary {
+      color: var(--muted);
+      font-size: 0.98rem;
+      margin: 0 0 18px;
+    }
+
+    .category .goals {
+      margin: 0 0 16px;
+      padding-left: 1.1em;
+      font-size: 0.92rem;
+    }
+
+    .category .goals li {
+      margin-bottom: 4px;
+      color: var(--ink);
+    }
+
+    .category-examples {
+      margin-top: 12px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: rgba(217, 231, 223, 0.4);
+      border: 1px solid rgba(18, 60, 58, 0.08);
+    }
+
+    .category-examples .eyebrow {
+      color: var(--deep);
+      font-size: 0.7rem;
+    }
+
+    .category-examples ul {
+      list-style: none;
+      padding: 0;
+      margin: 8px 0 0;
+    }
+
+    .category-examples li {
+      padding: 5px 0;
+      font-size: 0.88rem;
+      font-style: italic;
+      color: var(--ink);
+      position: relative;
+      padding-left: 16px;
+    }
+
+    .category-examples li::before {
+      content: """;
+      position: absolute;
+      left: 0;
+      font-family: Georgia, serif;
+      font-size: 1.1rem;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    /* Cannot do panel */
+    .cant-do-panel {
+      padding: 38px 40px 34px;
+      border-radius: 26px;
+      background: linear-gradient(160deg, rgba(184, 90, 58, 0.06), rgba(184, 90, 58, 0.01)),
+                  var(--paper);
+      border: 1px solid rgba(184, 90, 58, 0.18);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .cant-do-panel .eyebrow { color: var(--warn); }
+    .cant-do-panel h3 { color: var(--warn); margin: 8px 0 8px; }
+    .cant-do-panel p { color: var(--muted); margin-bottom: 18px; }
+
+    .cant-do-list {
+      list-style: none;
+      padding: 0;
+      margin: 14px 0 0;
+    }
+
+    .cant-do-list li {
+      padding: 14px 0 14px 30px;
+      position: relative;
+      border-top: 1px solid var(--line);
+      color: var(--ink);
+      font-size: 0.98rem;
+    }
+
+    .cant-do-list li:first-child { border-top: none; padding-top: 0; }
+    .cant-do-list li:first-child::before { top: 4px; }
+
+    .cant-do-list li::before {
+      content: "×";
+      position: absolute;
+      left: 0;
+      top: 13px;
+      color: var(--warn);
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .cant-do-list strong { color: var(--deep); }
+
+    .cant-do-examples {
+      margin-top: 22px;
+      padding: 20px 24px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.5);
+      border: 1px dashed rgba(184, 90, 58, 0.3);
+    }
+
+    .cant-do-examples .eyebrow { color: var(--warn); font-size: 0.7rem; }
+
+    .cant-do-examples ul {
+      list-style: none;
+      padding: 0;
+      margin: 8px 0 0;
+    }
+
+    .cant-do-examples li {
+      padding: 4px 0 4px 16px;
+      font-size: 0.9rem;
+      font-style: italic;
+      color: var(--ink);
+      position: relative;
+    }
+
+    .cant-do-examples li::before {
+      content: """;
+      position: absolute;
+      left: 0;
+      font-family: Georgia, serif;
+      font-size: 1.1rem;
+      color: var(--warn);
+      line-height: 1;
+    }
+
+    /* Requests panel */
+    .requests-panel {
+      padding: 36px 40px 32px;
+      border-radius: 24px;
+      background:
+        linear-gradient(160deg, rgba(217, 231, 223, 0.6), rgba(217, 231, 223, 0.2)),
+        var(--paper);
+      border: 1px solid rgba(18, 60, 58, 0.16);
+      box-shadow: var(--shadow);
+    }
+
+    .requests-panel h3 { margin-bottom: 14px; }
+
+    .requests-panel ul {
+      margin: 16px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .requests-panel ul li {
+      padding: 8px 0 8px 24px;
+      position: relative;
+      color: var(--ink);
+    }
+
+    .requests-panel ul li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 16px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--deep);
+    }
+
+    .requests-panel a {
+      color: var(--deep);
+      text-decoration: underline;
+      text-decoration-color: var(--accent);
+      text-underline-offset: 3px;
+      font-weight: 600;
+    }
+
+    /* Misunderstandings */
+    .misunderstandings {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 1000px) { .misunderstandings { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) { .misunderstandings { grid-template-columns: 1fr; } }
+
+    .misund {
+      padding: 26px 26px 24px;
+      border-radius: 20px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .misund .num {
+      font-family: Georgia, serif;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 1.02rem;
+      margin-bottom: 8px;
+    }
+
+    .misund h4 { margin-bottom: 8px; font-size: 1rem; }
+
+    .misund p {
+      color: var(--muted);
+      font-size: 0.94rem;
+      margin: 0;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 70px;
+      padding: 30px 0 50px;
+      border-top: 1px solid var(--line);
+    }
+
+    footer .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 14px;
+      color: var(--muted);
+      font-size: 0.86rem;
+    }
+
+    /* Subtle entrance */
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .hero-copy, .hero-summary, .section { animation: rise 0.6s ease both; }
+    .section:nth-child(2) { animation-delay: 0.05s; }
+    .section:nth-child(3) { animation-delay: 0.1s; }
+
+    @media print {
+      header { position: static; }
+      .grid-overlay { display: none; }
+      body { background: white; }
+      .category:hover { transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-overlay"></div>
+
+  <header>
+    <div class="container topbar">
+      <div class="brand">
+        <div class="mark">CAP</div>
+        <div class="brand-copy">
+          <strong>CAP Fundamentals</strong>
+          <span>Forward Deployment Team &middot; Smith.ai</span>
+        </div>
+      </div>
+      <nav>
+        <a href="#what">What is a CAP</a>
+        <a href="#why">Why</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#categories">Categories</a>
+        <a href="#cant-do">Can't Do</a>
+        <a href="#misunderstandings">Misunderstandings</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="container hero" id="overview">
+      <div class="hero-copy panel">
+        <div class="eyebrow">Conceptual foundation</div>
+        <h1>The customization layer for AIR.</h1>
+        <p class="lead">
+          A CAP (Custom AIR Prompt) is text inserted into a specific configuration field. At runtime, that text gets injected into three specific agents and changes how they behave. This is how Smith.ai delivers client-specific AI behavior beyond what the dashboard can configure.
+        </p>
+        <div class="thesis">
+          <strong>What you'll learn here</strong>
+          <p>
+            What CAPs are, why they exist, where they can reach (the architectural truth), and the six categories of customization they unlock. The single most important fact about CAP work lives in the Architecture section. Read that one slowly.
+          </p>
+        </div>
+      </div>
+
+      <aside class="hero-summary panel">
+        <div class="summary-top">
+          <div class="eyebrow" style="color:#f3cf8f;">At a glance</div>
+          <h3>The product, in numbers.</h3>
+          <p>The numbers underneath the CAP work, kept here for fast reference.</p>
+        </div>
+        <dl class="summary-meta">
+          <div>
+            <dt>Capability categories</dt>
+            <dd>6</dd>
+          </div>
+          <div>
+            <dt>Agents that receive CAPs</dt>
+            <dd>3 of 7</dd>
+          </div>
+          <div>
+            <dt>Configuration field</dt>
+            <dd>1</dd>
+          </div>
+          <div>
+            <dt>Owner</dt>
+            <dd>FDT</dd>
+          </div>
+        </dl>
+        <div class="summary-bottom">
+          CAPs are the primary deliverable of the CAP-focused side of the Forward Deployment Team.
+        </div>
+      </aside>
+    </section>
+
+    <!-- WHAT IS A CAP -->
+    <section class="container section" id="what">
+      <div class="section-head">
+        <div class="eyebrow">Definition</div>
+        <h2>What is a CAP?</h2>
+        <p>Two ways to say the same thing. Use the plain version with colleagues. Work with the technical version daily.</p>
+      </div>
+
+      <div class="definition-grid">
+        <article class="definition-card">
+          <div class="eyebrow">Plain language</div>
+          <h3>Custom instructions for the AIR.</h3>
+          <p>
+            A CAP is a set of custom instructions that change how the AI Receptionist behaves for a specific client. The AIR is built as an out-of-the-box product with a specific way of handling calls. Some clients need behavior outside that default. CAPs are how we get that custom behavior without breaking the underlying product.
+          </p>
+        </article>
+
+        <article class="definition-card technical">
+          <div class="eyebrow">Technical</div>
+          <h3>Text in <code>SPECIAL INSTRUCTIONS</code>.</h3>
+          <p>
+            A CAP is text inserted into a specific configuration field called <code>SPECIAL INSTRUCTIONS</code> on a client account. At runtime, the Smith.ai system injects this text into the system prompts of three specific agents. Those agents then behave according to the CAP's instructions in addition to their baseline programming.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- WHY -->
+    <section class="container section" id="why">
+      <div class="section-head">
+        <div class="eyebrow">Why CAPs exist</div>
+        <h2>The bridge between default and specific.</h2>
+        <p>
+          The AIR has a primary prompt that handles most use cases well out of the box. But Smith.ai serves clients across legal, medical, home services, and many other industries, each with their own intake logic, transfer rules, and language conventions. CAPs exist for three reasons.
+        </p>
+      </div>
+
+      <div class="reasons">
+        <article class="reason">
+          <div class="num">01</div>
+          <h4>Specific needs the default can't meet.</h4>
+          <p>A personal injury law firm doesn't qualify callers the same way an HVAC company does. Default behavior is generic by design. CAPs make it specific.</p>
+        </article>
+
+        <article class="reason">
+          <div class="num">02</div>
+          <h4>Beyond the dashboard.</h4>
+          <p>The dashboard handles a lot of configuration, but conditional logic, custom phrasing, multi-practice flows, and many transfer rules need prompt-level instructions instead.</p>
+        </article>
+
+        <article class="reason">
+          <div class="num">03</div>
+          <h4>Competitive advantage.</h4>
+          <p>No other AI receptionist on the market offers this depth of customization. CAPs are a meaningful part of why clients choose Smith.ai over alternatives.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- ARCHITECTURAL TRUTH -->
+    <section class="container arch-section" id="architecture">
+      <div class="section-head">
+        <div class="eyebrow">The architectural truth</div>
+        <h2>The thing you must internalize.</h2>
+      </div>
+
+      <div class="arch-callout">
+        This is the single most important fact in CAP work.
+      </div>
+
+      <div class="arch-grid">
+        <article class="arch-card yes">
+          <div class="eyebrow">Receives CAP</div>
+          <div class="arch-status">YES</div>
+          <h3>Three agents.</h3>
+          <ul class="agent-list">
+            <li><span class="check">✓</span> Main Assistant</li>
+            <li><span class="check">✓</span> Intake Assistant</li>
+            <li><span class="check">✓</span> Lookup Assistant</li>
+          </ul>
+        </article>
+
+        <article class="arch-card no">
+          <div class="eyebrow">Does NOT receive CAP</div>
+          <div class="arch-status">NO</div>
+          <h3>Out of CAP reach.</h3>
+          <ul class="agent-list">
+            <li><span class="check">×</span> FAQs in the dashboard</li>
+            <li><span class="check">×</span> Scheduling agent behavior</li>
+            <li><span class="check">×</span> Escalation Agent</li>
+          </ul>
+        </article>
+      </div>
+
+      <div class="arch-conclusion">
+        <div class="eyebrow">What this means</div>
+        <h4>CAPs cannot directly modify what's on the right.</h4>
+        <p>If a request asks to change how appointments are scheduled mid-call, change the transfer handoff message, or modify the dashboard FAQ behavior, <strong>a CAP cannot do those things directly.</strong></p>
+        <p>What CAPs <em>can</em> do is shape behavior in the agents that DO receive <code>SPECIAL INSTRUCTIONS</code>, including the moments BEFORE they hand off to a restricted agent and AFTER they get control back.</p>
+      </div>
+
+      <div class="arch-can-do">
+        <div class="eyebrow">What a CAP can do</div>
+        <h4>Inside the three reachable agents:</h4>
+        <ul>
+          <li>Tell the Main Assistant whether or not to invoke the FAQ Agent (<code>startFAQSession</code>)</li>
+          <li>Tell the Main Assistant or Intake Assistant when to invoke the Scheduling Agent (<code>startSchedulingSession</code>)</li>
+          <li>Tell the Intake Assistant when to invoke the Escalation Agent for a transfer</li>
+        </ul>
+      </div>
+
+      <div class="faq-example">
+        <div class="eyebrow">Worked example</div>
+        <h4>How "FAQ Customization" actually works.</h4>
+        <p>The native FAQ system in the dashboard can hold up to 50 FAQs. When an account needs more, additional Q&amp;A pairs go directly into the CAP. The Main Assistant or Intake Assistant (both of which receive <code>SPECIAL INSTRUCTIONS</code>) then answer those CAP-housed FAQs themselves, without involving the dashboard FAQ system. Customization happens in the agents that receive the CAP, not in the ones that don't.</p>
+      </div>
+    </section>
+
+    <!-- SIX CATEGORIES -->
+    <section class="container section" id="categories">
+      <div class="section-head">
+        <div class="eyebrow">What CAPs can do</div>
+        <h2>The six capability categories.</h2>
+        <p>Every CAP request falls into one or more of these. Memorize the categories. They are the shared vocabulary you'll use with CS and COB.</p>
+      </div>
+
+      <div class="categories">
+        <article class="category">
+          <div class="num">CATEGORY 01</div>
+          <h3>Call Transfer Handling</h3>
+          <p class="summary">Conditional and rule-based transfers. Deciding when to transfer a human, when not to, and to whom.</p>
+          <ul class="goals">
+            <li>Conditional and rule-based transfers</li>
+            <li>Prevent unnecessary human transfers</li>
+            <li>Schedule vs transfer logic</li>
+            <li>Transfer to person or department if mentioned</li>
+          </ul>
+          <div class="category-examples">
+            <div class="eyebrow">Example requests</div>
+            <ul>
+              <li>I want callers with billing issues transferred to a certain number</li>
+              <li>If they mention Sales Department, transfer the caller</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="category">
+          <div class="num">CATEGORY 02</div>
+          <h3>Custom Call Flows</h3>
+          <p class="summary">Different paths through the call based on caller type, practice area, or other branching logic.</p>
+          <ul class="goals">
+            <li>Conditional call flows</li>
+            <li>Custom caller types</li>
+            <li>Practice area-based flows</li>
+            <li>Renaming caller types</li>
+          </ul>
+          <div class="category-examples">
+            <div class="eyebrow">Example requests</div>
+            <ul>
+              <li>If they're calling for an emergency, follow these instructions instead</li>
+              <li>I need specific intake questions depending on my 4 practice areas</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="category">
+          <div class="num">CATEGORY 03</div>
+          <h3>Custom End of Call Messaging</h3>
+          <p class="summary">What the AIR says before ending the call, especially when the message should differ based on what happened during the call.</p>
+          <ul class="goals">
+            <li>Conditionally delivered closing remarks</li>
+            <li>Custom end messages per scenario</li>
+          </ul>
+          <div class="category-examples">
+            <div class="eyebrow">Example requests</div>
+            <ul>
+              <li>If a PNC is calling for parts, give this final message instead</li>
+              <li>If the caller is disqualified, I want the AI to say this&hellip;</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="category">
+          <div class="num">CATEGORY 04</div>
+          <h3>FAQ Customization</h3>
+          <p class="summary">Modifying how FAQ-style questions get answered. Most common form: housing additional Q&amp;A pairs in the CAP when an account needs more than the 50 the dashboard can hold natively.</p>
+          <ul class="goals">
+            <li>Provide answers longer than 500 characters</li>
+            <li>Avoid transferring too early without answering FAQs</li>
+            <li>Ensure verbatim answers</li>
+            <li>Trigger FAQs based on keywords</li>
+          </ul>
+          <div class="category-examples">
+            <div class="eyebrow">Example requests</div>
+            <ul>
+              <li>The AI is editorializing my FAQ answers</li>
+              <li>The bot keeps transferring after answering a question</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="category">
+          <div class="num">CATEGORY 05</div>
+          <h3>Script Customization</h3>
+          <p class="summary">Custom phrasing for things the AIR says. The "voice" of the AIR for a specific client.</p>
+          <ul class="goals">
+            <li>Custom phrasing for questions</li>
+            <li>Intake structure by practice area</li>
+          </ul>
+          <div class="category-examples">
+            <div class="eyebrow">Example requests</div>
+            <ul>
+              <li>When gathering the email, I want you to say this&hellip;</li>
+              <li>I need the bot to use bridging phrases between questions</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="category">
+          <div class="num">CATEGORY 06</div>
+          <h3>Confirmation Customization</h3>
+          <p class="summary">Whether and how the AIR confirms what it heard back to the caller.</p>
+          <ul class="goals">
+            <li>Enable/disable confirmation</li>
+            <li>Enable/disable reflective listening</li>
+          </ul>
+          <div class="category-examples">
+            <div class="eyebrow">Example requests</div>
+            <ul>
+              <li>I don't want the AI to confirm spelling back to the caller</li>
+              <li>I need the bot to always confirm the spelling of the business name</li>
+            </ul>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- WHAT CAPS CANNOT DO -->
+    <section class="container section" id="cant-do">
+      <div class="section-head">
+        <div class="eyebrow">Limits</div>
+        <h2>What CAPs cannot do (yet).</h2>
+        <p>These are common requests CAPs currently cannot fulfill. When a request lands in this category, log it as a feature request (Canny) and let the requester know the workaround status.</p>
+      </div>
+
+      <div class="cant-do-panel">
+        <div class="eyebrow">Out of reach</div>
+        <h3>Four current limitations.</h3>
+        <ul class="cant-do-list">
+          <li><strong>Custom call transfer handoff message.</strong> What the AIR says when transferring is generated by the Escalation Agent, which doesn't receive <code>SPECIAL INSTRUCTIONS</code>.</li>
+          <li><strong>Conditional SMS follow-up.</strong> SMS routing is a platform feature, not a prompt feature.</li>
+          <li><strong>Conditional call summaries.</strong> Summary routing (e.g., PNCs to one email, ECs to another) is a platform feature.</li>
+          <li><strong>Conditional actions based on date/time.</strong> CAPs don't have access to runtime date/time information in a way that lets them branch on it.</li>
+        </ul>
+
+        <div class="cant-do-examples">
+          <div class="eyebrow">Example requests that fall here</div>
+          <ul>
+            <li>When transferring a call, I want it to say: Great, that's all I need&hellip;</li>
+            <li>I only want to send the follow-up SMS if they don't want to schedule</li>
+            <li>I want PNC summaries sent to this email and EC to a different email</li>
+            <li>I only want transfers to me on Tuesdays and Thursdays within 9am-2pm</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHERE REQUESTS COME FROM -->
+    <section class="container section" id="requests">
+      <div class="section-head">
+        <div class="eyebrow">Where requests come from</div>
+        <h2>The intake path.</h2>
+      </div>
+
+      <div class="requests-panel">
+        <h3>Custom Prompt Request form.</h3>
+        <p style="color:var(--muted); margin-bottom:0;">
+          CAP requests come into the team primarily through the
+          <a href="https://forms.clickup.com/14295188/f/dm84m-3236257/XAHMKYLOYKCUA4XP5E" target="_blank" rel="noopener">Custom Prompt Request form</a>,
+          submitted by CS or COB on behalf of a client. The full intake-to-deploy workflow is covered in the CAP Modification Playbook.
+        </p>
+        <ul>
+          <li>Most requests originate from CS or COB after a client conversation</li>
+          <li>Requests should be specific. A pasted client comment or a forwarded email is not a request, it's raw material.</li>
+          <li>Some requests have prerequisites (e.g., transfer-related requests usually require team directory updates first)</li>
+          <li>Bug reports and feature requests adjacent to the workaround should be linked from Canny</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- COMMON MISUNDERSTANDINGS -->
+    <section class="container section" id="misunderstandings">
+      <div class="section-head">
+        <div class="eyebrow">Common misunderstandings</div>
+        <h2>What gets confused.</h2>
+        <p>These come up frequently from CS and COB. Knowing how to handle them is part of the job.</p>
+      </div>
+
+      <div class="misunderstandings">
+        <article class="misund">
+          <div class="num">01</div>
+          <h4>"Can't a CAP just do X?"</h4>
+          <p>When X requires reaching into a restricted agent. The architectural truth is the answer. Translate the request: is it really about that agent, or about the agent that hands off to it?</p>
+        </article>
+
+        <article class="misund">
+          <div class="num">02</div>
+          <h4>CAP changes vs dashboard changes.</h4>
+          <p>Some things belong in the Smith.ai dashboard, not in a CAP. Renaming caller types, enabling certain transfer behaviors, configuring the team directory are dashboard tasks. Putting them in a CAP is an anti-pattern.</p>
+        </article>
+
+        <article class="misund">
+          <div class="num">03</div>
+          <h4>"We just want it to be smarter."</h4>
+          <p>Vague capability requests are not actionable. The job is to translate "smarter" into a specific behavior change in a specific category.</p>
+        </article>
+
+        <article class="misund">
+          <div class="num">04</div>
+          <h4>CAPs as general AI tweaks.</h4>
+          <p>A CAP is not "telling the AI to do better." It's prompt engineering against a known multi-agent architecture with known constraints. Imprecision in the CAP becomes imprecision in the call.</p>
+        </article>
+
+        <article class="misund">
+          <div class="num">05</div>
+          <h4>Conditional logic on missing runtime data.</h4>
+          <p>Date, time, caller history beyond classification, and external state are generally not available for CAP branching.</p>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div>
+        <strong style="color:var(--deep);">CAP Fundamentals</strong>
+        &middot; Owned by Lead AIR Solutions Consultant
+      </div>
+      <div>
+        Forward Deployment Team &middot; Smith.ai
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
