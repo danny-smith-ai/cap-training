@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>Callable Actions — Quick Reference</title>
+<style>
+  :root{--paper:#faf7ef;--callout-bg:#f3eede;--code-bg:#f0ebdb;--ink:#1c1c1a;--ink-soft:#2a2a26;--muted:#6b6862;--rule:#d8d2c2;--rule-soft:#e8e3d4;--accent:#2c4a4a;--callout-bar:#5a7878;--warn-bg:#f5ede8;--warn-bar:#8b4a2a;}
+  @page{size:A4;margin:22mm 0 26mm 0;background-color:#faf7ef;}
+  *{box-sizing:border-box;}
+  html{background:var(--paper);}
+  html::before{content:'';position:fixed;inset:-200mm;background:var(--paper);z-index:-1000;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  body{margin:0;padding:0 22mm;color:var(--ink);font-family:"Source Serif 4",Charter,Georgia,serif;font-size:10.5pt;line-height:1.55;background:var(--paper);}
+
+  /* COVER */
+  .cover{page-break-after:always;break-after:page;min-height:240mm;display:flex;flex-direction:column;justify-content:space-between;padding:6mm 0 4mm;}
+  .cover-top{display:flex;justify-content:space-between;align-items:flex-start;}
+  .wordmark{font-family:"Source Serif 4 SemiBold","Source Serif 4",serif;font-size:9.5pt;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent);}
+  .cover-rev{font-size:9pt;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;}
+  .cover-mid{margin-top:34mm;}
+  .cover-eyebrow{font-family:"Source Serif 4 SemiBold","Source Serif 4",serif;font-size:9.5pt;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);margin-bottom:14pt;}
+  h1.cover-title{font-weight:700;font-size:38pt;line-height:1.08;letter-spacing:-0.012em;margin:0 0 14pt;max-width:18em;}
+  .cover-sub{font-size:13pt;line-height:1.45;color:var(--ink-soft);font-style:italic;max-width:32em;margin:0;}
+  .cover-bottom{border-top:1px solid var(--rule);padding-top:14pt;display:grid;grid-template-columns:repeat(4,1fr);gap:10pt;}
+  .meta-cell .label{font-size:8pt;text-transform:uppercase;letter-spacing:0.14em;color:var(--muted);font-family:"Source Serif 4 SemiBold","Source Serif 4",serif;margin-bottom:4pt;}
+  .meta-cell .value{font-size:10pt;}
+
+  /* CONTENT */
+  .section{page-break-before:always;break-before:page;padding-top:4mm;}
+  .section.flow{page-break-before:auto;break-before:auto;}
+  .eyebrow{display:block;font-size:8.5pt;text-transform:uppercase;letter-spacing:0.18em;color:var(--accent);font-family:"Source Serif 4 SemiBold","Source Serif 4",serif;margin-bottom:6pt;}
+  h2{font-weight:700;font-size:22pt;line-height:1.15;letter-spacing:-0.005em;margin:0 0 14pt;max-width:22em;}
+  h3{font-family:"Source Serif 4 SemiBold","Source Serif 4",serif;font-size:13pt;line-height:1.3;margin:22pt 0 6pt;}
+  h4{font-style:italic;font-weight:400;font-size:10.5pt;margin:14pt 0 4pt;color:var(--ink-soft);}
+  p{margin:0 0 9pt;max-width:38em;}
+  p strong,li strong{font-family:"Source Serif 4 SemiBold","Source Serif 4",serif;font-weight:600;}
+  em{font-style:italic;}
+  .lead{font-size:12pt;line-height:1.5;color:var(--ink-soft);max-width:34em;margin-bottom:14pt;}
+
+  ul{list-style:none;padding-left:0;margin:6pt 0 10pt;max-width:38em;}
+  ul>li{position:relative;padding-left:16pt;margin-bottom:4pt;}
+  ul>li::before{content:"·";position:absolute;left:4pt;top:0;color:var(--accent);font-weight:700;font-size:14pt;line-height:1;}
+
+  /* CODE */
+  code{font-family:"JetBrains Mono","Liberation Mono",monospace;font-size:0.87em;background:var(--code-bg);padding:1pt 4pt;border-radius:2pt;}
+  pre{background:var(--code-bg);border:0.5pt solid var(--rule);border-radius:3pt;padding:11pt 14pt;font-family:"JetBrains Mono","Liberation Mono",monospace;font-size:9pt;line-height:1.6;white-space:pre-wrap;word-break:break-word;margin:8pt 0 14pt;max-width:44em;}
+  pre code{background:transparent;padding:0;font-size:inherit;}
+
+  /* ACTION CARD */
+  .action{border:0.5pt solid var(--rule);border-radius:4pt;padding:0;margin:0 0 18pt;max-width:44em;break-inside:avoid;page-break-inside:avoid;}
+  .action-head{background:var(--callout-bg);border-bottom:0.5pt solid var(--rule);padding:10pt 14pt;border-radius:4pt 4pt 0 0;display:flex;align-items:baseline;gap:12pt;}
+  .action-name{font-family:"JetBrains Mono","Liberation Mono",monospace;font-size:10.5pt;font-weight:600;color:var(--accent);}
+  .action-tag{font-family:"Source Serif 4 SemiBold","Source Serif 4",serif;font-size:8pt;text-transform:uppercase;letter-spacing:0.12em;color:var(--muted);}
+  .action-body{padding:12pt 14pt;}
+  .action-body p{margin:0 0 8pt;max-width:none;}
+  .action-body p:last-child{margin-bottom:0;}
+  .action-body pre{margin:8pt 0 4pt;}
+  .param-table{width:100%;border-collapse:collapse;font-size:9.5pt;margin:8pt 0 4pt;}
+  .param-table th{font-family:"Source Serif 4 SemiBold","Source Serif 4",serif;font-size:8pt;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);text-align:left;padding:5pt 8pt;border-bottom:1pt solid var(--rule);}
+  .param-table td{padding:6pt 8pt;border-bottom:0.5pt solid var(--rule-soft);vertical-align:top;}
+  .param-table tr:last-child td{border-bottom:none;}
+  .param-table td code{font-size:0.87em;}
+  .req{color:var(--accent);font-family:"Source Serif 4 SemiBold","Source Serif 4",serif;font-size:8.5pt;}
+  .opt{color:var(--muted);font-size:8.5pt;}
+
+  /* CALLOUTS */
+  blockquote{margin:12pt 0;padding:10pt 14pt 10pt 16pt;border-left:2.5pt solid var(--callout-bar);background:var(--callout-bg);border-radius:0 3pt 3pt 0;color:var(--ink-soft);max-width:44em;}
+  blockquote p{margin:0 0 5pt;max-width:none;}
+  blockquote p:last-child{margin-bottom:0;}
+  blockquote strong{color:var(--accent);}
+
+  .warn{margin:12pt 0;padding:10pt 14pt 10pt 16pt;border-left:2.5pt solid var(--warn-bar);background:var(--warn-bg);border-radius:0 3pt 3pt 0;max-width:44em;}
+  .warn p{margin:0 0 5pt;max-width:none;}
+  .warn p:last-child{margin-bottom:0;}
+
+  hr{border:none;border-top:0.5pt solid var(--rule);margin:18pt 0;max-width:44em;}
+
+  @media print{body,*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}h2,h3,h4,.action,blockquote,.warn,pre{page-break-inside:avoid;break-inside:avoid;}h2,h3,h4{page-break-after:avoid;break-after:avoid;}p,li{orphans:3;widows:3;}}
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<section class="cover">
+  <div class="cover-top">
+    <div class="wordmark">Smith.ai · Forward Deployment Team</div>
+    <div class="cover-rev">Reference · May 2026</div>
+  </div>
+  <div class="cover-mid">
+    <div class="cover-eyebrow">Quick Reference</div>
+    <h1 class="cover-title">Callable Actions</h1>
+    <p class="cover-sub">Exact CAP-writing syntax for every action you can script. Keep this open while building.</p>
+  </div>
+  <div class="cover-bottom">
+    <div class="meta-cell"><div class="label">Owner</div><div class="value">Lead AIR Solutions Consultant</div></div>
+    <div class="meta-cell"><div class="label">Audience</div><div class="value">CAP Specialists</div></div>
+    <div class="meta-cell"><div class="label">Use when</div><div class="value">Building or modifying a CAP</div></div>
+    <div class="meta-cell"><div class="label">Status</div><div class="value">v1 · May 2026</div></div>
+  </div>
+</section>
+
+<!-- HOW TO USE -->
+<section class="section">
+  <span class="eyebrow">Before you use this doc</span>
+  <h2>The two rules that govern all of these.</h2>
+  <p class="lead">Every action in this doc follows the same two rules. Violating either one causes real problems on real calls.</p>
+
+  <h3>Rule 1: Always write function calls exactly</h3>
+  <p>Copy the syntax from this doc verbatim. The agent parses function calls at runtime. A missing quote, a wrong parameter name, or an abbreviated destination will cause the action to fail silently or misbehave. There is no partial execution — it either fires correctly or it doesn't.</p>
+  <p><strong>Destination phone numbers must be the full E.164 format.</strong> That means <code>+1XXXXXXXXXX</code> — the + sign, the country code, then the full number with no spaces, dashes, or parentheses. Confirm the number with the requester before building. A wrong number in a CAP fires transfers to the wrong place, silently, on every call that hits the rule.</p>
+
+  <h3>Rule 2: Always use "silently execute"</h3>
+  <p>Every function call in a CAP should be prefaced with "silently execute" or "silently call." This instructs the agent not to narrate the function call to the caller. Without it, the agent may say something like "I'm going to transfer you now" or "Let me end this call" before executing the action — behavior most clients don't want and didn't ask for.</p>
+
+  <pre>✓  silently execute transferCall(destination = "+1XXXXXXXXXX", transfer_type = "transfer_to_pro")
+✗  execute transferCall(destination = "+1XXXXXXXXXX", transfer_type = "transfer_to_pro")
+✗  transferCall(destination = "+1XXXXXXXXXX", transfer_type = "transfer_to_pro")</pre>
+
+  <blockquote>
+    <p><strong>The single tool per response rule.</strong> An agent can only fire one function call per response turn. If your CAP has a step that collects a field AND fires a function call, those must be in separate response turns. The agent will collect the field, return to the caller, then fire the function call on the next turn. You don't need to script this separation explicitly — the agent handles it — but knowing it exists explains why you sometimes see an extra exchange in a transcript between the last collected field and the end action.</p>
+  </blockquote>
+</section>
+
+<!-- TRANSFER ACTIONS -->
+<section class="section">
+  <span class="eyebrow">Transfer actions</span>
+  <h2>Transfers.</h2>
+  <p class="lead">Used to route the caller to a human or to a specific destination. Always requires an explicit phone number — the agent cannot resolve names to numbers.</p>
+
+  <div class="action">
+    <div class="action-head">
+      <span class="action-name">transferCall</span>
+      <span class="action-tag">Standard transfer</span>
+    </div>
+    <div class="action-body">
+      <p>The most common transfer action. Routes the caller to a phone number without screening the receiving party first (cold transfer).</p>
+      <pre>silently execute transferCall(destination = "+1XXXXXXXXXX",
+                             transfer_type = "transfer_to_pro")</pre>
+      <table class="param-table">
+        <thead><tr><th>Parameter</th><th>Required</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td><code>destination</code></td><td><span class="req">Required</span></td><td>Full phone number in E.164 format: <code>"+1XXXXXXXXXX"</code></td></tr>
+          <tr><td><code>transfer_type</code></td><td><span class="req">Required</span></td><td>Always <code>"transfer_to_pro"</code> for a direct transfer</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="action">
+    <div class="action-head">
+      <span class="action-name">transferCall</span>
+      <span class="action-tag">With extension</span>
+    </div>
+    <div class="action-body">
+      <p>Same as above but routes to a specific extension at the destination number. Use when the client has a multi-extension phone system and wants the caller routed to a specific person or department.</p>
+      <pre>silently execute transferCall(destination = "+1XXXXXXXXXX",
+                             transfer_type = "transfer_to_pro",
+                             extension = "207")</pre>
+      <table class="param-table">
+        <thead><tr><th>Parameter</th><th>Required</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td><code>destination</code></td><td><span class="req">Required</span></td><td>Full phone number in E.164 format</td></tr>
+          <tr><td><code>transfer_type</code></td><td><span class="req">Required</span></td><td><code>"transfer_to_pro"</code></td></tr>
+          <tr><td><code>extension</code></td><td><span class="req">Required for extension routing</span></td><td>Extension number as a string: <code>"207"</code></td></tr>
+        </tbody>
+      </table>
+      <p><strong>Confirm the extension with the requester.</strong> Extension numbers are not validated at deploy time — a wrong extension will silently route to the wrong person.</p>
+    </div>
+  </div>
+
+  <blockquote>
+    <p><strong>transferCall vs startEscalationSession.</strong> <code>transferCall</code> is what a CAP scripts directly — it fires the transfer from the Intake Assistant immediately. <code>startEscalationSession</code> is the system invocation that hands control to the Escalation Agent, which then routes using the team directory. For CAP-driven transfers where you know the exact destination and want deterministic routing, always use <code>transferCall</code> directly. Use <code>startEscalationSession</code> only when you specifically want the Escalation Agent to take over (rare in CAP work).</p>
+  </blockquote>
+</section>
+
+<!-- END CALL ACTIONS -->
+<section class="section">
+  <span class="eyebrow">End call actions</span>
+  <h2>Ending the call.</h2>
+  <p class="lead">Two options: end with a custom spoken message, or end with the playbook's configured final statement. Use the custom message when the client needs the AI to say something specific. Use the final statement for everything else.</p>
+
+  <div class="action">
+    <div class="action-head">
+      <span class="action-name">endCallWithMessage</span>
+      <span class="action-tag">Custom spoken message</span>
+    </div>
+    <div class="action-body">
+      <p>Ends the call after the AI speaks a specific message you define in the CAP. Use this when the default end-of-call wording isn't appropriate for the scenario — disqualified callers, specific routing outcomes, scenarios where the client wants custom language.</p>
+      <pre>silently execute endCallWithMessage(message_key = "Thank you for calling.
+A member of our team will be in touch shortly. Have a great day.")</pre>
+      <table class="param-table">
+        <thead><tr><th>Parameter</th><th>Required</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td><code>message_key</code></td><td><span class="req">Required</span></td><td>The exact text the AI will speak before ending the call. Wrap in double quotes. No character limit, but keep it conversational — long messages sound robotic.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="action">
+    <div class="action-head">
+      <span class="action-name">endCallWithMessage</span>
+      <span class="action-tag">Multi-language variant</span>
+    </div>
+    <div class="action-body">
+      <p>When an account serves callers in more than one language, the closing message should match the language of the call. Structure the action inside a language conditional.</p>
+      <pre>silently execute endCallWithMessage with this behavior:
+  - If the call language is English:
+    message_key = "Thank you for that information. Someone from our
+    office will be in touch shortly. Have a great day."
+  - If the call language is Spanish:
+    message_key = "Gracias por esa información. Alguien de nuestra
+    oficina se comunicará con usted en breve. Que tenga un buen día."</pre>
+      <p><strong>Always provide the Spanish message when the account has Spanish-speaking callers.</strong> An English-only <code>endCallWithMessage</code> will be spoken in English to a Spanish-language caller.</p>
+    </div>
+  </div>
+
+  <div class="action">
+    <div class="action-head">
+      <span class="action-name">endCallWithFinalStatement</span>
+      <span class="action-tag">Playbook default</span>
+    </div>
+    <div class="action-body">
+      <p>Ends the call using whatever closing message the playbook has configured in the dashboard. Use this when you want the call to end normally after a CAP rule fires — you're controlling when it ends but not what it says.</p>
+      <pre>silently execute endCallWithFinalStatement(playbook_id = "...")</pre>
+      <table class="param-table">
+        <thead><tr><th>Parameter</th><th>Required</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td><code>playbook_id</code></td><td><span class="opt">Often omitted</span></td><td>In most CAPs this parameter is left as <code>"..."</code> or omitted entirely — the system resolves the active playbook at runtime. Only specify it if you need to force a specific playbook's final statement.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="warn">
+    <p><strong>Collect all required fields before firing an end action.</strong> A CAP must not fire <code>endCallWithMessage</code> or <code>transferCall</code> until all fields required for that route have been collected. If the end action fires before collection is complete, the account loses the caller's information. State this explicitly in the CAP if the route has any ambiguity: "After collecting all of the above, silently execute…"</p>
+  </div>
+</section>
+
+<!-- AGENT HANDOFF ACTIONS -->
+<section class="section">
+  <span class="eyebrow">Agent handoff actions</span>
+  <h2>Handing off to other agents.</h2>
+  <p class="lead">Less commonly scripted in CAPs than transfer and end-call actions, but important to know. These hand control to a specific agent and return when that agent's session is complete.</p>
+
+  <div class="action">
+    <div class="action-head">
+      <span class="action-name">startFAQSession</span>
+      <span class="action-tag">Invoke FAQ Agent</span>
+    </div>
+    <div class="action-body">
+      <p>Hands the call to the FAQ Agent to answer an information-seeking question, then returns control to the calling agent. Most commonly invoked automatically by Main or Intake — you'll rarely script this directly in a CAP. The more common CAP pattern for FAQ work is to house additional FAQs in the CAP itself and have Intake answer them, bypassing the FAQ Agent entirely.</p>
+      <pre>silently execute startFAQSession</pre>
+      <p><strong>Remember:</strong> the FAQ Agent does not receive SPECIAL INSTRUCTIONS. If you invoke it, your CAP rules have no reach inside that session.</p>
+    </div>
+  </div>
+
+  <div class="action">
+    <div class="action-head">
+      <span class="action-name">startSchedulingSession</span>
+      <span class="action-tag">Invoke Scheduling Agent</span>
+    </div>
+    <div class="action-body">
+      <p>Hands the call to the Scheduling Agent to book, reschedule, or cancel an appointment. Returns control when the scheduling session ends. Typically invoked automatically by Intake at the end of a playbook that has scheduling as its end action. You'll script this directly only when you need to trigger scheduling at a non-standard point in the call flow.</p>
+      <pre>silently execute startSchedulingSession</pre>
+      <p><strong>Remember:</strong> the Scheduling Agent does not receive SPECIAL INSTRUCTIONS. CAP rules don't reach inside the scheduling session.</p>
+    </div>
+  </div>
+
+  <div class="action">
+    <div class="action-head">
+      <span class="action-name">startLookupSession</span>
+      <span class="action-tag">Invoke Lookup Agent</span>
+    </div>
+    <div class="action-body">
+      <p>Hands the call to the Lookup Agent to run an external data lookup (typically via n8n). Returns control when the lookup completes. The Lookup Agent does receive SPECIAL INSTRUCTIONS under a dedicated header — CAP rules can reach it, unlike the other handoff agents.</p>
+      <pre>silently execute startLookupSession</pre>
+      <p>CAP instructions for the Lookup Agent are written under a separate header in the SPECIAL INSTRUCTIONS field, not mixed in with the Intake instructions. Follow the account's existing Lookup section structure when adding or modifying Lookup behavior.</p>
+    </div>
+  </div>
+</section>
+
+<!-- DEFENSIVE LANGUAGE -->
+<section class="section">
+  <span class="eyebrow">Writing conventions</span>
+  <h2>Defensive language and field collection.</h2>
+  <p class="lead">The function call is only half the job. What you write around it determines whether the agent behaves correctly before and after the action fires.</p>
+
+  <h3>Defensive language — stop the agent from doing the wrong thing</h3>
+  <p>After a function call fires, the agent's default behavior is to continue the conversation — ask more questions, offer more help, run more intake steps. Defensive language explicitly prohibits this. Use it whenever a CAP action should terminate the flow.</p>
+
+  <pre>silently execute transferCall(destination = "+1XXXXXXXXXX",
+                             transfer_type = "transfer_to_pro")
+Do not ask further questions, confirm details, or provide any information.
+End the interaction after the transfer command is executed.</pre>
+
+  <p>The three prohibition lines above are load-bearing. Without them:</p>
+  <ul>
+    <li>The agent may ask for name, phone, and email before or after the transfer fires</li>
+    <li>The agent may confirm the transfer verbally to the caller</li>
+    <li>The agent may continue intake after the transfer attempt returns</li>
+  </ul>
+
+  <h3>Field collection gate — prevent premature action</h3>
+  <p>When a route collects fields and then fires an action, use explicit gate language to prevent the action from firing before all fields are collected.</p>
+
+  <pre>Collect the following, one by one, individually.
+Do not skip any unless already collected:
+  1. Caller's full name
+  2. Caller's phone number
+  3. Caller's email address
+
+After collecting all of the above, silently execute
+endCallWithMessage(message_key = "Thank you for that information.
+Someone from our team will be in touch. Have a great day.")</pre>
+
+  <p><strong>"One by one, individually"</strong> — prevents the agent from asking for multiple fields in a single response turn.</p>
+  <p><strong>"Do not skip any unless already collected"</strong> — allows the agent to skip fields the caller has already provided voluntarily, without violating the field collection rule.</p>
+  <p><strong>"After collecting all of the above"</strong> — the gate. The action cannot fire until every field above it is collected.</p>
+
+  <h3>Trigger precision — "identifies as" vs "mentions"</h3>
+  <p>The difference between these two is significant.</p>
+  <pre>✓  If the caller identifies as a member of [group]...
+✗  If the caller mentions [group]...</pre>
+  <p>"Mentions" fires on any reference — a caller saying "my sister called ICE on my landlord" mentions ICE. "Identifies as a member of ICE" fires only when the caller is claiming to be from ICE. Use "identifies as" for caller-type triggers. Use specific keyword lists for topic triggers.</p>
+</section>
+
+<!-- QUICK REFERENCE TABLE -->
+<section class="section">
+  <span class="eyebrow">At a glance</span>
+  <h2>All actions on one page.</h2>
+
+  <table style="max-width:none;width:100%;font-size:9.5pt;">
+    <thead>
+      <tr>
+        <th style="width:28%;">Action</th>
+        <th style="width:30%;">When to use</th>
+        <th style="width:42%;">Minimum required syntax</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>transferCall</code></td>
+        <td>Route caller to a phone number</td>
+        <td><code>silently execute transferCall(destination = "+1XXXXXXXXXX", transfer_type = "transfer_to_pro")</code></td>
+      </tr>
+      <tr>
+        <td><code>transferCall</code> + extension</td>
+        <td>Route to a specific extension</td>
+        <td>Add <code>extension = "XXX"</code> as third parameter</td>
+      </tr>
+      <tr>
+        <td><code>endCallWithMessage</code></td>
+        <td>End with a specific spoken message</td>
+        <td><code>silently execute endCallWithMessage(message_key = "...")</code></td>
+      </tr>
+      <tr>
+        <td><code>endCallWithFinalStatement</code></td>
+        <td>End with the playbook default</td>
+        <td><code>silently execute endCallWithFinalStatement(playbook_id = "...")</code></td>
+      </tr>
+      <tr>
+        <td><code>startFAQSession</code></td>
+        <td>Hand to FAQ Agent (rare to script)</td>
+        <td><code>silently execute startFAQSession</code></td>
+      </tr>
+      <tr>
+        <td><code>startSchedulingSession</code></td>
+        <td>Hand to Scheduling Agent</td>
+        <td><code>silently execute startSchedulingSession</code></td>
+      </tr>
+      <tr>
+        <td><code>startLookupSession</code></td>
+        <td>Hand to Lookup Agent</td>
+        <td><code>silently execute startLookupSession</code></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <hr/>
+
+  <h3>The checklist before you paste a CAP into the dashboard</h3>
+  <ul>
+    <li>Every function call has "silently execute" in front of it</li>
+    <li>Every <code>transferCall</code> has a real E.164 phone number in the <code>destination</code> parameter</li>
+    <li>Every <code>transferCall</code> with an extension has the correct extension confirmed by the requester</li>
+    <li>Every <code>endCallWithMessage</code> has a complete, conversational message in <code>message_key</code></li>
+    <li>Multi-language accounts have both language variants in any <code>endCallWithMessage</code></li>
+    <li>Every route that collects fields has "after collecting all of the above" before the end action</li>
+    <li>Every conditional transfer has defensive language after the function call</li>
+    <li>Trigger phrases use "identifies as" for caller-type triggers, not "mentions"</li>
+  </ul>
+</section>
+
+</body>
+</html>
